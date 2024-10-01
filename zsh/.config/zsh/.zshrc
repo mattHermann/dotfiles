@@ -14,6 +14,9 @@ source $ZDOTDIR/plugins/wbase.zsh/wbase.zsh
     fi
 }
 
+# Enable ZSH_THEME
+ZSH_THEME="agnoster"
+
 # Enable fish-shell like autosuggestion
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=247'
 ZSH_AUTOSUGGEST_USE_ASYNC=1
@@ -68,6 +71,7 @@ alias g='git'
 alias d='sudo docker'
 alias grep='grep --color=auto'
 alias ip='ip -c'
+alias ll='ls -la'
 alias la='exa --long --git --group --classify --all'
 alias l='exa --long --git --group --classify'
 alias ls='ls --color=auto'

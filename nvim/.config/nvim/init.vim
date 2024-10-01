@@ -1,6 +1,8 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+source ~/.vimrc
+
 "vim needs a more POSIX compatible shell than fish
 if &shell =~# 'fish$'
     set shell=bash

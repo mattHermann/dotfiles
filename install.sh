@@ -10,9 +10,29 @@ function check_prog() {
 
 check_prog stow
 check_prog curl
+check_prog nvim
+check_prog vim
+check_prog zsh
+
 
 mkdir -p "$HOME/.config"
+
+############################# Dependencies ##############################
+#                                                                       #
+# Uncomment the lines to install the necessary packages for the config  #
+#                                                                       #
+#                                                                       #
+#                                                                       #
+#                                                                       #
+#                                                                       #
+#                                                                       #
 #########################################################################
+
+#install zsh
+#sudo apt-get install zsh
+#Install oh-my-zsh
+#sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
 
 
 
@@ -37,18 +57,19 @@ mkdir -p "$HOME/.config"
 #stow --target "$HOME"              latex
 #stow --target "$HOME" --no-folding moc
 #stow --target "$HOME"              mpv
-#stow --target "$HOME" --no-folding nvim
+stow --target "$HOME" --no-folding  vim
+stow --target "$HOME" --no-folding  nvim
 #stow --target "$HOME"              python
 #stow --target "$HOME" --no-folding ranger
 #stow --target "$HOME" --no-folding scripts
 #stow --target "$HOME"              sway
 #stow --target "$HOME" --no-folding tmux
-#stow --target "$HOME"              vimiv
+stow --target "$HOME"              vimiv
 #stow --target "$HOME"              vscode
 #stow --target "$HOME"              xdg
 #stow --target "$HOME"              ytcc
 #stow --target "$HOME"              zathura
-#stow --target "$HOME" --no-folding zsh
+stow --target "$HOME" --no-folding zsh
 
 
 #stow --target "$HOME" --no-folding vscode;
