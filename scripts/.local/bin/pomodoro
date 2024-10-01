@@ -1,0 +1,128 @@
+#!/bin/bash
+
+###
+# This script provides a simple pomodoro timer. Check out the following link to
+# learn more about the Pomodoro Technique:
+# http://cirillocompany.de/pages/pomodoro-technique/
+#
+# This script repeats the Pomodoro cycle indefinitely until it is killed e.g.
+# using Ctrl+C
+#
+# Usage:
+#   pomodoro -h
+###
+
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+beep='//tQxAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAkAAAeMwAHBw4ODhUVFRwcHCMjKioqMTExODg4QEBHR0dOTk5VVVVcXFxjY2pqanFxcXh4eICAh4eHjo6OlZWVnJyco6OqqqqxsbG4uLjAwMfHx87OztXV1dzc3OPj6urq8fHx+Pj4//8AAAA5TEFNRTMuMTAwAaUAAAAALnAAABRAJAS2QgAAQAAAHjM+TvtZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7UMQAAAnYQ0xVhIABhJVpyzjQAAeq9MdFdFdFdFdQd52kJiFlzKs41POTzc4rAy0w2vgYDAIAgCAYFCBia6NGjRg+8QAgCGJwf4IOnOn3dPu6fd0+7lwfw+CByoBh/SCHT7kAEAIAAaCjCIK0VALkyEyiUjD1tUAM+E4mGhkLdG6w8YdDwSEh4CGcREu0AsQBo+AVQ5QWr8J8O0YUS3/HcMMMMSI9f/JEyLxeRLv/5dMi8XkUTH+IgqCoiPf6wVEQVBUspWigIABL+jABoYH/+1LEBYPKZC0cHfyAAT01osH9iVAiBWGBahuxgsoVkYWOCKGEKikhjv42cdJydpmPyC448KCmA0gLxgXoGoYDWAKmAiAHZvwA0kIZnf/////////////0+whYu09jlZpn9QDGBrCcZgIQAmYBKALGAXgKxgLwNOfT0jeHxUZlJgYIHl1mAx6ikVnv//+3////////1///////////+3r/373lar6na9DoglNhdcsbUtd4vCYIaKrGAogChgFwA6YBoAzmAxg9B/06wefPfGUHZv/7UsQSA8pdqxQP7EqJHYWige/tAA4oFAFVaDaOQz3Nf//v////////9P//1/r///////v6fT7urbHnIy9mtUs0E6MvjlZnn5QBGI4oqYKACJgWgMGBiDIYCoD1n5RLxx4l+ZCdGBCoXAlgYIkEine/+7//+v870/v/1f/91ezMHHOtDZRkXEQohwfVyxtTsDIamCViaRgKIAUYBYALmAWAMpgI4PUfMaxgnR3xjB2ARQQAaynjkchnuf//7//////+n/6f///////////f//5q//tSxCKDyj2fFA/sSoletiJB/YlRIlTKxNGYiIoUTOkiz45WZ55S/RgsQpuYC8AFmAagDRgGIDkYCEEYn7+OnhyW6YqjAQbEYMqi3CKQqd7p//9v//////X/9fvb9t07f//6////9vX/chHZc2q6Kx0azqUEZ2PBklXLG/RPchCYLWJ0GAvgAhgGQAyYBUA4mAYhFh9L7vqbLtGEI4VGhgHVmaXA8HUfP//9/////////m/121ttp/2Wnr/+n////7WStFV1qaWrupFmIUy0Cs3/+1LEK4PK5a8SD+xKiVi1okH9iVHj29Rvki0YLcJNgYC5MAxAFDAJwG4wBwInPa0eXjMtkCogiGyEGVnaQ/EH0Xf//9v//////X/9f//f9/3Xr6f////r7e+yI9t6rR9yEawdnGIVzBhENZV2Ploew3gDBPw8ABoCaAwCQALAwBgBbAwAMHaA7MdrBAqBbAgAOQagCQRAAQ/gs8g5IFtv//9///vWmq1MVbAxilZ0LY5wxFOdvT8CJnmCeBvY8BKmARgBBgCYCsQA6Z0wDUwY/f/7UsQyg8j5sRQLgFmJNDVigf2JUajBsSiZIALLZRDkjou///7f////////X////////////2/9ui/VWQ7KtGO7aCQQJe8vzkDpIGCbhmhMBJmAQAApgBgCmBAcg5jVoxMBKAsAaAajAAgOgAKwDK37kFHz/2+///////////7LTnRnaenBLPzfGR/O4W4onWaDUeNDoBguMAxCMALBhTeolmg1+TMAKBGFoyLTaxDkjvd/////////q////VkTC9AcKKC0AKFEKrJmhBwxIBgf//tSxEYDyL2VFA+AUcj1BaLB3+0AoSgA0A5gFAFIAgB+BgDAL0Bt3as6BgPgEcBgBIBOAsAEBbsP0FbkHJA+3////o1n2nZjSM6OzvVUDINr/tiXu4gHMEUCYQMBAA4AyBICMYBeDSm4kLuxgV4FCYAoAXAkANLyJzsMdyL2O//9f/9v//+vT///////paSu12qhWc5TEdEOcHhq/luWP+XcMEFCGjAPwAEMALRAAhmAeAyxsfKwaYGYBNGAOgFoAADC96mDD3filvn/v///////+1LEYgPIgakWC4BXySs1IoHwCjH/////+8jrQvW7rdO6g2caYYuI/PCnfwuuYHgDqmAdAAwkATEIB4YCWDDmrVKLhgcoEqYBIAUGABgBZdRQNdjuRex3///b////t//////b76ojXZSLZGUO3XWDVfwzpHbLcG2ccY3BY8HR0bmAqAuhpLqTOf5GGVk5gwQXDUAXe78Ut8/////////////1XrUbJFxG0DF2nyYKgh+eFPDCAs1JHzFAIKwOIhMYKImZ6acTH3uJkw0YKBoqKv/7UsR4g8kBqRQPgFHJILRigfAKOXZw/kvsd///////t//////zLCZq7CJABkFiUgr8K8ocMKADGF2JYYHIDI8AwAQNTB8GAPV32kxVgkDBDAnMBAAgDABoOKncuHLfP//+n37U///////+jVS+6zliGM6EmEgqXZgb/nUlbgCEAUwfgvzAoAWFgCzAAAkMHMTc4TqfDE7BzMDoBowDwAy1iYa7HIh+x36/////7f//////+2WjETaSyPkPKeZROQrlJQ1wuACjcYLIORgXgJmB//tSxI4Dx+wtFA5/aADwBaLBz20AUBcYLILJhCC6Gi21KAisDCrBtBQBYQBOYBAA0EuQ/H////////67tf////66wIEbgyWeZIEwWrUIZArGwtG4mAwFAgA02GOy40WTfjlgsjCBw5HM5nisuwi1s0AGaYWLiuAakyBkRPD3A5gyYHzYgdgcBiUfk4Th03AKNgZokBjhADAD5JlQnyfMAUngZBEBphQG/XgaMz+zWaFp4j0G0wsXAwwAG8H/+KUGeC3wMYA2Nidyf///I8XOOMX/+1LErgPJJbMSDwBTwRm1YoHgCjjAVJMDmEQ///8n3l8vm5pcuFyUADhADBBBBAAwHQLhQAJrIFAuhgCgXmEoHmY1oUQODzMStM0wdQCDCQTfM1IKUwYAdTHwCRMBkAYxuQiTAaAYA24CdTFDA2VAXMBtR+DYY1FnBiL/AcEAIoNqlkMa/+HwjlC5hzjIZb/8VsTJFS6YkBGV//zI2mRFiBGLJf//mJMkVSdEyLxeWz/ywKnRKIjwNCX//nQVdIt0nEXlMAqAeTArgI0wXAH3MP/7UsTEAAjYKxQV54ACXSfr9zNAQm4CaTB3AIkwPYNlMaSIRTXRoUQxvkcGMTzCcjA9wHYwA4CrMCoAOUZ1/mnRMqW//////////////+65NzAJDIzuFuWOWWcOu8WMTQHBwehYUTATAdo5E3z9PwuDJzkwISBoGjwsO1+BJ93/Lf//7Pq/+////6t/oTHH2FofNVkguAmjPzsS9yASAAmFUBZZgJAAUHAGwyAlGArg5JwYncgcHWJiwaGBwiDAAieqRrkDznf//8v//////r/+//tSxLMAEuERPznpgAFMBePDv4AAv/+37/f3/3//9v/1/+z0fqWjrZXdVM7OiBXYEYeJ/CnjDlgwAjpWgDEUDxYLSURTAYgbI3U/n7OOKgxmMTBAOBIBSEVO19+Lbv+r////V/3fblP//LZ7cpZak+tqomA5okHx7wf/OkjbkA0AFMKACOTAPgBIiAJhEAfGA1gzps9HB8cxT5jgWGDQaWURXVI5EP2O///6/////////X/////6+///////+nVl57mqlyKssiVgoYr8KeMMrBD/+1LEnAPIaCsUDv9oAVs1IoH+CVEAUYWGEdGAjgDpMAUAUBDMCIBwDZvfes7krjJIzMKBAwGAUAiY7O34n+f//6f/////+//5P/t//3+n/9f///p/6PmRqUR1NRVeVzjPYo6MS4KjWdJG2UA0ANMKmB7TAQACAWAIzAAgDowJMGlNYK7mDw6jMnC4wuDQEBC8aYjOH7sd///1//////8v/6/T/9/t+vX0/////X/6bX1tB9eYSHAGgM14ut4V5Q0sKAYdEtAYdhKGAoYFhmYE0P/7UsStA8joKxQO/4gBQTVigf4JUDDGk58j55ZLGUxSYaBQGBaABMdncOU7v+r////V/ZXkv///Vj7Gzxt+oAjjrxcuMBw8RZrOpK3AC4EnDCVmFAPBADmBQQGBFgnJmjl+odvOpkgOGFQGDgIimsRyIfsP/6//////1/v///+nFFqWKjAygHFAwsqEGiIOVf1XlDpiIAEMG7AzDAGwBtBwwAsATMB6A9jI359cwUgBYMA/AEQMAQF006GJu3GM///////////3//T+2qoystnK//tSxL8DyvmxEg/wSoFTMGJB/glRqglT71upE2QCEARMIiAzTAJACwEgAJgDQAsYFeCTmQYYYh782mXgwYfAIOCBfNQRrD/0nf//9f////////n7l9v//727//v////2/+r7IzVZDznI1DmUK44koKLV3cm4AWDCgPHTpfGF4igwDjDMGTA8gVgxk3tJMJWAgjAhwCEwDIAEBQBWEABCANYdyKfn//+n//////0/tyf/faunes1X/6v+nb//9Lfcl6asyKRkYUJs7GcTM1DgYAD/+1LExoPJDCsSDv+IARsFYoHf8QDUWBqIJq7MRNfAhBk4cF0wcDwZA0wsAQwNcEBME+wXjCEwF0wHQAQAwCuEADgcABpgMMf+k7///r/////////69f9OnpXqvr2/ev//9f+rv7KkhFEFJkZFexwZAcGg4US23cm4gvsRBg/aEjCY9KoQCDOYG0BqGG+WRJhDQCQYDuAEg4BUDgB8OAAEw2dwxX////T//////////KlOi/6t7v3rKz/9/////TMysUN2uU9lYxSCiKcpxgFCK//7UsTcg8iZqRYPgFfJYjViQf4JUYirK7MR9hAyANmDeACBgBAB8IgBUmAbTA3QKUxfWiIMIfANTAeAAAMAWxIAcEgANMBrEN1P0/SiJev/ZEv6X//v//+/v9M67OrGYczoiuqkcBjFVzGUWdAodcblDBC2xgQHxSWYBJoJDwGRxggQEEZE9S3mE5AEwKBHxIBsFgC8SACEf2HvpX1///p/////////971Sn9N/lpXpsrX/X///76u91Nar1VyqYrEKZTFYGEZyAIUDQULDmF1r//tSxOuDzHWzDg78SMFxNSIB34kZsketOwdAKzBwgHgQALhgAwBWYCwAJmCWgJZlidMYYWeAHiwKYPAQ40AcCQAuXwXI6cxvtpb36v19d2sZFTpql9Uv/Xbtb//6WtV1qvZ1WQEYM7wTGDsBgxzEgwaILdDizqtyhfBP8kAKjBewIcUAXzADwC4wF0AiBwS6ZclHSjwsyNApxMBCkwB2LACCG654Aodf2/vqsy5305exZKP163J0+1/p///Rb6GRUpIjqdwiKQOOwJzjnZiHDjj/+1LE6YPLmbEQDnxIwV+2YgHwFjjsMUPyq0EGqNFQAhMEGAbgKAnGAIAE5gKABOYIOAmGT8s6BhN4AgDgR0WAbiYAtHgAtOhlEB3N/fpvv97KvSj+1tdn+v///tViNRW6M6opxR3IiAnaxiMECEGLAIfVxrTMGKOkIBAYF+AtmAFAJ5gC4BUYCqAZGCCAR5klif6YTUAWmBGgAQYA2jwBcTABCl7hwRV/7f9v6+zpX+dv/9/////7/Xfpu6DnRnQyFRGdyGK4qg0SFFMGCaJyj//7UsTtA8wVsQ4OfEjJiTZhgfAKMMuogoAkBgMTB2BCMBAKgHB4gQO8yBw6zgl20MXMa4xiAjAoBAYDACJgWgHvmRQDfHk3/////////+u33++v9+1XrUz21atVX+v6v///20uitVbIJIoLdbVpsm5xWdnDFjbkSUiAAQKRoLBsLgKAwCAPmq80bK6m5qsHiMhlAUEzJxE+XDHhm1DMOG8mpkofhbwT4HgVA2Z4zAsB8DjpwO4iCRXycJBzQDTjwNUAASNAyoP5Uc0NHAYuAY0+//tSxOmDy8mvDA+AUYlntOHB8Ao5BoxYIkIGNK/oNZoAScG7QMSLAUHhjoGFB//4gGHRhcGO8Mvh66X//4uciZcGbLZODjMic///8rnDQ3MDQ+YGjlz//hAEBAADgIFHf///+ceSAAAIhQGBhAghAAQAFmB8EPKwYAhHSACwwoAYTEuMaAwXJgVoAAAAkxGxFDGlCGMDEDQw7gbDAFANASVgGBPAwbIDoykuBy2gAKIDZpvwtOC3QBwIc//Dog5YWkUkNL/xZpDiuLNMjP/8gKT/+1LE6wPLibEOD4CxgZI1YcK80AFiQGYkV//1l0urLpdWXUf//zEusYmqgVBl3/lp4so8Ii3//PB1eFFVeAFACjAMQFowFkASMEpA6zBAwMYwEABLMDCAtzCExQAzJRy3MJEEPzEDApMwTgC3MB0AEjAcQFIwCkA0PTzktpEPf//////////////++rW7k23QdA85cnQwACoYAkmEkwKcB5N8n28jBpwCUFAWAkAdiwAYl2uh2JXU////X////////7///+3/9f/////X6ev6vv/7UsTogBUlP0W5ugACQqEocz1AAFotsqTo7uqkM8owpcbl2OM/HAUOj7jBIahcEAwYjAwgGQ5EzuDPyBwIaYsSBoLoiKbuHEK/3/7P//6f/7fZ7v//2U/rQqRYJmBQg4NEhObyu3I+0QhAEzCaAu4RAGgMAEwEAymBhgHJybPDIfhBYs0B4ljwURrVw7ETqf///r//////7f/v//9PJ////////+3578/1oqHXIejCjuhiBCjqxuUMcY2SA0dL7GVRBMAwaMPwOMDgABDqUvKs//tSxKmDykgtIB38ACFBNaLB34kZIERCgDzKAFgiAIxoAATrcOIXf3//+n////////2/+7I++s/7fX2/////J+9f3dzlufodsrSucYEcpggsCkyu0ElU6KoMnNmyCEQDAYHTEAFzA3wBo6mXkQCBDoWA8SIBaKABweAA1cOBE7n7f//X///////////7en/7/3+n///f29vZCtWpmIhFoYyAj445I2G1xrUMGKNkoPHSvumAAmmCITGJ4UGB/AMJ4B3nOYTEAKgoEWEgG0mAKiL/+1LEtgPIaC0UDv+IAUa2YoH+CVAAEUvcOCLv7///T//////3+/7en2/feqdt/+2/3/3//T3/7pMSk9TanRHBhyBKCpGBnHnyqzUEqPEAPnMXpGBYlGCgUmKAYmB9gSh3w/GUYSuAVGBEAAYYA1DwBSTAA6ljgQXW3t//9f////////v+tfv0q6+yy/Sl1T////3/1Ta11SQqMrLMp3IZHIg+oFLFQ6qVxyux5sJCCBtTb5gQGZgaDBhyExgWwEicfxRNmDeAFZgL4AEGAII8AP/7UsTJg8sRqxIO/EjJU7LiQd+JGZKINPfegq////p////////9vWz///+vb9f/////f9lv/ZL5UVdTGU7vg1OFfLGtMt2HAA8wYILKMARAMDAEABkwDgAtMCzAsDjG5XQwbMA4MBcABwgA+GgA1QptIhQ1v//////////++t9bUnRZaomk7siIKpgIYscqs08I6AEGCXhLpgCABOYAaAJGAXgExgSgFibus8RmC3AHJgJYAMEAFosADLddeJzWP///Tb//////////bv6NXu7d//tSxNCDy4mvEA78SMmBNiIB35UYGYlXqDxMqs1EV9CIGTZrZDC0QjCQKzFITzA5QTY6mmiOMIZAcDAeAB8wC0AEDAB1C5mkARGmx///1//////9v/3/2rT7J+3f/u9v/9P/z+3/RGopjgFZDKZCs6pDoqEVDBiIxrVYkzEQgsa152YZCCYThUYoioYG4CsnQxSTJhAgD+YDmASGAVAA4QAPI0t/AcSpe///6f/////+//7f/R7Vvvqd/+3u9F/////6bPlzdkuzmI62YYORwwr/+1LE0APKkbMUDvxIwSy04oHwCvkMfJ4TlVrRFkQWAFTBOgwgwDsA+MAqAKzAUAFswNUF2OYTgtDB8QIwwG4ApMApACAcAMojOZHIjTc//7/rXWfX9y6bf//////0pZNvdlIWTbGMPMxCjxwqSYIuhxWxxrSmGmQg0AYMEzDNzATAEcwDcA0MBfAcDA6gc86GSDpMIeAsTAewDgwC4ATAQBEX5bPJYape/9P7777futX+tr6f1X////+n65d7K4lQjKqiRTEECB0QUXCcVGGHCf/7UsTeA8kxrRYPgFHJdjYiAd+JGBJMqtNDLAgQAKmB+BdxgKYCEYBwAamAuAOpgb4PUcoW5UGEAgXhgOQB6YBWAKGAGAAKA57Y9DMu5//r++f9fvp//tVSO9v////6XspUeVhSxWiE5CxYpxQMYeLZEUTipsaalhpgIJAEjAyQp8wFgA/MA7AMjAWwHowNIIHOFSYgzB4gMkwG0BAMAmAFzACwAJBWBpTD0t7/6+3r/uvNZc1LU312//7f/9PqZ7yf2UYwxxRHFFd0KZziwueD//tSxOiDy52nEA78SMloNeIB8BYxKLii5Y00Za0DAAswH4H6MBPALjAMgCkwEoBrMCrB2DZnUfgwYcC2MBUAOTAGwBIwAQABTCh2mh2e5//t3//V1/qvb/2/r////9n1umrUrjZkoxwghA5SmUzMBULG1SxpnIBADDAXweEwGAA1MA/AMDAVQIAwLgI1NiQQlTBngN0wFsBIMAeAGzABwARFV/pbD0t7un/2//delHZtdO9dKs3/tf///3p1+ecyKJQwZJjnHHKLUwQIDhQQgYf/+1LE6wPL8bEOD4CxiXo2YcHwFjBcsaaMs6AAASYBMC3GAygFxgIABeYCkBBmBUhJBpsZmcYL2ByGAoAJpgDYA4YAEADonPrLn5nud/97/ZkVaUr/22/////1t7OrWcZZSEch2gwbqx1ihAOKQAAyr7NqWw8xEwBQCBQREwfANTBNA2MF0Jwwsisz9KpxMYQREwVQXDAcAnMAUAwva8UhdaK9pyMl2+zUVLVtTZf/Rn6v2TV10/2/7ey/QjqQ990QG6GUzhTJBsUxwIDMUBECUP/7UsTqA8vlrw4PgLGBYjYiAfAKMECMuVoo+xaUx+A8YA0CU5DswCCrjYVU+McMH4wFgSzAfAAHAB1NpLF4jF67oQhHyE/////////9P9f31582is3t/9/9/////+d5GKZjIVPIoMgZHFBJwjIg5wrqTEFNRTMuMTAwqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqBdaLYk0JuWFwhxpiUZSHGHrhvpQbpbmzGRt5wsCr//tSxOwDzBGzDg+AUYFttiHB8Ao5pIVrr/Ralq0tLZGAqGlA1LHs9JYaiKr9bruzlflvdZ1KPHfO//8OiUYep1DzodDRUJA0PDdMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/+1LE7APMMa0MDwBRiWe2YcGvCRhVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/7UsTLA8pcMwZjY2JAAAA0gAAABFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'
+audio_enabled=true
+notification_enabled=true
+print_enabled=true
+minutes_work=25
+minutes_short_break=5
+minutes_long_break=20
+
+warn(){
+    echo "${YELLOW}Warning:${NC} $*"
+}
+
+check_prog() {
+    if ! command -v "$1" > /dev/null; then
+        warn "Command $1 not available!"
+        return 1
+    fi
+    return 0
+}
+
+message() {
+    if $notification_enabled; then
+        notify-send "$@"
+    fi
+
+    if $print_enabled; then
+        echo "$(date +%H:%M)   $*"
+    fi
+
+    if $audio_enabled; then
+        echo $beep | base64 --decode | mpg123 -q -
+    fi
+}
+
+work() {
+    message "Get your work done!"
+    sleep "${minutes_work}m"
+}
+
+pause() {
+    message "Take a break for ${1} minutes!"
+    sleep "${1}m"
+}
+
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "OPTIONS:"
+    echo "  -h        print this help and exit"
+    echo "  -a        disable audio"
+    echo "  -n        disable notification"
+    echo "  -p        disable printing to stdout"
+    echo "  -t w:s:l  set timers. Format is 'work_minutes:short_break_minutes:long_break_minutes'"
+}
+
+while getopts "hapnt:" opt; do
+    case $opt in
+        h)
+            usage
+            exit
+            ;;
+        a)
+            audio_enabled=false
+            ;;
+        p)
+            print_enabled=false
+            ;;
+        n)
+            notification_enabled=false
+            ;;
+        t)
+            time_format="$OPTARG"
+            ;;
+        ?)
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+if [ -n "$time_format" ]; then
+    IFS=":" read -ra times <<< "$time_format"
+    minutes_work=${times[0]}
+    minutes_short_break=${times[1]}
+    minutes_long_break=${times[2]}
+fi
+
+if $audio_enabled; then
+    if ! (check_prog base64 && check_prog mpg123); then
+        audio_enabled=false
+        warn "Audio will be disabled!"
+    fi
+fi
+
+if $notification_enabled; then
+    if ! check_prog notify-send; then
+        notification_enabled=false
+        warn "Notifications will be disabled!"
+    fi
+fi
+
+while true; do
+    work
+    pause "$minutes_short_break"
+    work
+    pause "$minutes_short_break"
+    work
+    pause "$minutes_short_break"
+    work
+    pause "$minutes_long_break"
+done

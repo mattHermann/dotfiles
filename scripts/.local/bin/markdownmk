@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+###
+# A small tool to watch a markdown file and convert it to pdf as soon as it changes.
+#
+# Usage:
+#   markdownmk file.md
+#
+# Dependencies: inotify-tools, zathura, pandoc
+###
+
+pdf_viewer="zathura"
+watch_file=$(realpath "$1")
+tmp_dir="/tmp/markdownmk"
+pid_file="$tmp_dir/${watch_file//\//%}.pid"
+build_file="$tmp_dir/${watch_file//\//%}.pdf"
+pdf_viewer_pid=-1
+
+
+check_prog() {
+    if ! hash "$1" > /dev/null 2>&1; then
+        echo "Command not found: $1. Aborting..."
+        exit 1
+    fi
+}
+
+maybe_start_pdf_viewer(){
+    if [ "$pdf_viewer_pid" -lt 1 ] || ! ps -p "$pdf_viewer_pid" > /dev/null; then
+        $pdf_viewer "$build_file" &
+        pdf_viewer_pid=$!
+        echo "$pdf_viewer_pid" > "$pid_file"
+    fi
+}
+
+compile_and_view(){
+    pandoc -o "$build_file" "$watch_file"
+    maybe_start_pdf_viewer
+}
+
+check_prog pandoc
+check_prog inotifywait
+check_prog $pdf_viewer
+
+if [ ! -r "$1" ];then
+    echo "Cannot read file '$1'"
+    exit 1
+fi
+
+mkdir -p "$tmp_dir"
+if [ -w "$pid_file" ]; then
+    pdf_viewer_pid=$(<"$pid_file")
+fi
+
+compile_and_view
+
+while true; do
+    inotifywait -e modify "$watch_file"
+    compile_and_view
+done
